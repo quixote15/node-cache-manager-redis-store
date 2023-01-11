@@ -1,11 +1,18 @@
 import {callbackify} from 'node:util';
-import {createClient} from 'redis';
+import {createClient, createCluster} from 'redis';
 
 export async function redisStore(config) {
   const redisCache = createClient(config);
   await redisCache.connect();
 
   return buildRedisStoreWithConfig(redisCache, config);
+}
+
+export async function redisClusterStore(config) {
+  const redisCache = createCluster(config)
+  await redisCache.connect()
+
+  return buildRedisStoreWithConfig(redisCache, config)
 }
 
 const buildRedisStoreWithConfig = (redisCache, config) => {
