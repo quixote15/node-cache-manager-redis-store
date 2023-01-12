@@ -2,7 +2,6 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var node_util = require('node:util');
 var redis = require('redis');
 
 function _regeneratorRuntime() {
@@ -457,6 +456,107 @@ function _redisStore() {
   }));
   return _redisStore.apply(this, arguments);
 }
+function redisClusterStore(_x2) {
+  return _redisClusterStore.apply(this, arguments);
+}
+function _redisClusterStore() {
+  _redisClusterStore = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee11(config) {
+    var redisCache;
+    return _regeneratorRuntime().wrap(function _callee11$(_context11) {
+      while (1) {
+        switch (_context11.prev = _context11.next) {
+          case 0:
+            redisCache = redis.createCluster(config);
+            _context11.next = 3;
+            return redisCache.connect();
+          case 3:
+            return _context11.abrupt("return", buildRedisStoreWithConfig(redisCache, config));
+          case 4:
+          case "end":
+            return _context11.stop();
+        }
+      }
+    }, _callee11);
+  }));
+  return _redisClusterStore.apply(this, arguments);
+}
+function redisAdaptativeConnection() {
+  return _redisAdaptativeConnection.apply(this, arguments);
+}
+function _redisAdaptativeConnection() {
+  _redisAdaptativeConnection = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
+    var configIndex,
+      config,
+      _args12 = arguments;
+    return _regeneratorRuntime().wrap(function _callee12$(_context12) {
+      while (1) {
+        switch (_context12.prev = _context12.next) {
+          case 0:
+            configIndex = 0;
+          case 1:
+            if (!(configIndex < _args12.length)) {
+              _context12.next = 33;
+              break;
+            }
+            config = configIndex < 0 || _args12.length <= configIndex ? undefined : _args12[configIndex];
+            if (!config.socket) {
+              _context12.next = 16;
+              break;
+            }
+            _context12.prev = 4;
+            _context12.next = 7;
+            return redisStore(config);
+          case 7:
+            _context12.t0 = _context12.sent;
+            return _context12.abrupt("return", {
+              mode: 'master/slave',
+              connection: _context12.t0
+            });
+          case 11:
+            _context12.prev = 11;
+            _context12.t1 = _context12["catch"](4);
+            console.info("Could not connect master/slave with configuration at index:[".concat(configIndex, "]"));
+          case 14:
+            _context12.next = 30;
+            break;
+          case 16:
+            if (!config.rootNodes) {
+              _context12.next = 29;
+              break;
+            }
+            _context12.prev = 17;
+            _context12.next = 20;
+            return redisClusterStore(config);
+          case 20:
+            _context12.t2 = _context12.sent;
+            return _context12.abrupt("return", {
+              mode: 'cluster',
+              connection: _context12.t2
+            });
+          case 24:
+            _context12.prev = 24;
+            _context12.t3 = _context12["catch"](17);
+            console.info("Could not connect Cluster with configuration at index:[".concat(configIndex, "]"));
+          case 27:
+            _context12.next = 30;
+            break;
+          case 29:
+            throw 'Missing socket or rootNodes field';
+          case 30:
+            configIndex++;
+            _context12.next = 1;
+            break;
+          case 33:
+            throw 'None of the configurations lead to a proper connection';
+          case 34:
+          case "end":
+            return _context12.stop();
+        }
+      }
+    }, _callee12, null, [[4, 11], [17, 24]]);
+  }));
+  return _redisAdaptativeConnection.apply(this, arguments);
+}
 var buildRedisStoreWithConfig = function buildRedisStoreWithConfig(redisCache, config) {
   var isCacheableValue = config.isCacheableValue || function (value) {
     return value !== undefined && value !== null;
@@ -489,7 +589,7 @@ var buildRedisStoreWithConfig = function buildRedisStoreWithConfig(redisCache, c
         }
       }, _callee);
     }));
-    return function set(_x2, _x3, _x4) {
+    return function set(_x3, _x4, _x5) {
       return _ref.apply(this, arguments);
     };
   }();
@@ -518,7 +618,7 @@ var buildRedisStoreWithConfig = function buildRedisStoreWithConfig(redisCache, c
         }
       }, _callee2);
     }));
-    return function get(_x5, _x6) {
+    return function get(_x6, _x7) {
       return _ref2.apply(this, arguments);
     };
   }();
@@ -539,7 +639,7 @@ var buildRedisStoreWithConfig = function buildRedisStoreWithConfig(redisCache, c
         }
       }, _callee3);
     }));
-    return function del(_x7) {
+    return function del(_x8) {
       return _ref3.apply(this, arguments);
     };
   }();
@@ -592,7 +692,7 @@ var buildRedisStoreWithConfig = function buildRedisStoreWithConfig(redisCache, c
         }
       }, _callee4);
     }));
-    return function mset(_x8) {
+    return function mset(_x9) {
       return _ref4.apply(this, arguments);
     };
   }();
@@ -664,14 +764,22 @@ var buildRedisStoreWithConfig = function buildRedisStoreWithConfig(redisCache, c
       return _ref6.apply(this, arguments);
     };
   }();
-  var _reset = /*#__PURE__*/function () {
+  var reset = /*#__PURE__*/function () {
     var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
+      var couldFlush;
       return _regeneratorRuntime().wrap(function _callee7$(_context7) {
         while (1) {
           switch (_context7.prev = _context7.next) {
             case 0:
+              couldFlush = redisCache.flushDb;
+              if (couldFlush) {
+                _context7.next = 3;
+                break;
+              }
+              throw 'Cannot Reset';
+            case 3:
               return _context7.abrupt("return", redisCache.flushDb());
-            case 1:
+            case 4:
             case "end":
               return _context7.stop();
           }
@@ -684,19 +792,27 @@ var buildRedisStoreWithConfig = function buildRedisStoreWithConfig(redisCache, c
   }();
   var _keys = /*#__PURE__*/function () {
     var _ref8 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(pattern) {
+      var hasKeys;
       return _regeneratorRuntime().wrap(function _callee8$(_context8) {
         while (1) {
           switch (_context8.prev = _context8.next) {
             case 0:
+              hasKeys = redisCache.keys;
+              if (hasKeys) {
+                _context8.next = 3;
+                break;
+              }
+              throw 'Has No Keys Function';
+            case 3:
               return _context8.abrupt("return", redisCache.keys(pattern));
-            case 1:
+            case 4:
             case "end":
               return _context8.stop();
           }
         }
       }, _callee8);
     }));
-    return function keys(_x9) {
+    return function keys(_x10) {
       return _ref8.apply(this, arguments);
     };
   }();
@@ -714,7 +830,7 @@ var buildRedisStoreWithConfig = function buildRedisStoreWithConfig(redisCache, c
         }
       }, _callee9);
     }));
-    return function ttl(_x10) {
+    return function ttl(_x11) {
       return _ref9.apply(this, arguments);
     };
   }();
@@ -724,104 +840,42 @@ var buildRedisStoreWithConfig = function buildRedisStoreWithConfig(redisCache, c
       return redisCache;
     },
     isCacheableValue: isCacheableValue,
-    set: function set(key, value, options, cb) {
-      if (typeof options === 'function') {
-        cb = options;
-        options = {};
-      }
+    set: function set(key, value, options) {
       options = options || {};
-      if (typeof cb === 'function') {
-        node_util.callbackify(_set)(key, value, options, cb);
-      } else {
-        return _set(key, value, options);
-      }
+      return _set(key, value, options);
     },
     get: function get(key, options, cb) {
       if (typeof options === 'function') {
-        cb = options;
         options = {};
       }
       options = options || {};
-      if (typeof cb === 'function') {
-        node_util.callbackify(_get)(key, options, cb);
-      } else {
-        return _get(key, options);
-      }
+      return _get(key, options);
     },
     del: function del() {
       for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
         args[_key3] = arguments[_key3];
       }
-      if (typeof args.at(-1) === 'function') {
-        var cb = args.pop();
-        node_util.callbackify(_del)(args, cb);
-      } else {
-        return _del(args);
-      }
+      return _del(args);
     },
     mset: function mset() {
       for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
         args[_key4] = arguments[_key4];
       }
-      if (typeof args.at(-1) === 'function') {
-        var cb = args.pop();
-        node_util.callbackify(_mset)(args, cb);
-      } else {
-        return _mset(args);
-      }
+      return _mset(args);
     },
     mget: function mget() {
-      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-        args[_key5] = arguments[_key5];
-      }
-      if (typeof args.at(-1) === 'function') {
-        var cb = args.pop();
-        node_util.callbackify(function () {
-          return _mget.apply(void 0, args);
-        })(cb);
-      } else {
-        return _mget.apply(void 0, args);
-      }
+      return _mget.apply(void 0, arguments);
     },
     mdel: function mdel() {
-      for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-        args[_key6] = arguments[_key6];
-      }
-      if (typeof args.at(-1) === 'function') {
-        var cb = args.pop();
-        node_util.callbackify(function () {
-          return _mdel.apply(void 0, args);
-        })(cb);
-      } else {
-        return _mdel.apply(void 0, args);
-      }
+      return _mdel.apply(void 0, arguments);
     },
-    reset: function reset(cb) {
-      if (typeof cb === 'function') {
-        node_util.callbackify(_reset)(cb);
-      } else {
-        return _reset();
-      }
-    },
+    reset: reset,
     keys: function keys() {
       var pattern = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '*';
-      var cb = arguments.length > 1 ? arguments[1] : undefined;
-      if (typeof cb === 'function') {
-        node_util.callbackify(function () {
-          return _keys(pattern);
-        })(cb);
-      } else {
-        return _keys(pattern);
-      }
+      return _keys(pattern);
     },
-    ttl: function ttl(key, cb) {
-      if (typeof cb === 'function') {
-        node_util.callbackify(function () {
-          return _ttl(key);
-        })(cb);
-      } else {
-        return _ttl(key);
-      }
+    ttl: function ttl(key) {
+      return _ttl(key);
     }
   };
 };
@@ -835,4 +889,6 @@ function isObject(object) {
   return _typeof(object) === 'object' && !Array.isArray(object) && object !== null;
 }
 
+exports.redisAdaptativeConnection = redisAdaptativeConnection;
+exports.redisClusterStore = redisClusterStore;
 exports.redisStore = redisStore;
