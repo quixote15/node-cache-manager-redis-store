@@ -14,6 +14,34 @@ export async function redisClusterStore(config) {
   return buildRedisStoreWithConfig(redisCache, config)
 }
 
+export async function redisAdaptativeConnection(...configs) {
+  for(let configIndex = 0; configIndex < configs.length; configIndex++) {
+    const config = configs[configIndex]
+    if(config.socket) {
+      try {
+        return {
+          mode: 'master/slave',
+          connection: await redisStore(config)
+        }
+      } catch (e) {
+        console.info(`Could not connect master/slave with configuration at index:[${configIndex}]`)
+      }
+    } else if(config.rootNodes) {
+      try {
+        return {
+          mode: 'cluster',
+          connection: await redisClusterStore(config)
+        }
+      } catch (e) {
+        console.info(`Could not connect Cluster with configuration at index:[${configIndex}]`)
+      }
+    } else {
+      throw 'Missing socket or rootNodes field'
+    }
+  }
+  throw 'None of the configurations lead to a proper connection'
+}
+
 const buildRedisStoreWithConfig = (redisCache, config) => {
   const isCacheableValue =
     config.isCacheableValue || (value => value !== undefined && value !== null);
