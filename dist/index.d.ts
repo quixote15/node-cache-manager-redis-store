@@ -1,5 +1,6 @@
 import type { Store, StoreConfig } from "cache-manager";
-import type { RedisClientType, RedisClientOptions } from "redis";
+import type {RedisClientType, RedisClientOptions, RedisClusterOptions} from "redis";
+import RedisCluster from "@redis/client/dist/lib/cluster";
 
 interface RedisStore extends Store {
     name: string;
@@ -17,3 +18,5 @@ interface RedisStore extends Store {
 }
 
 export function redisStore(config: RedisClientOptions & StoreConfig): Promise<RedisStore>;
+export function redisClusterStore(config: RedisClusterOptions & StoreConfig): Promise<RedisStore>;
+export function redisAdaptativeConnection(...config: (RedisClientOptions & StoreConfig | RedisClusterOptions & StoreConfig)[]): Promise<RedisStore>;
