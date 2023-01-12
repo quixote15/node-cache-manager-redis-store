@@ -1,5 +1,5 @@
 {
-  "name": "cache-manager-redis-cluster-store",
+  "name": "@tijolotech/cache-manager-redis-cluster-store",
   "author": "Thiago Santos <santos2tiago@gmail.com>, Joseildo Mariano <filhojoseildo@gmail.com>",
   "description": "Redis store for node-cache-manager and cluster redis",
   "version": "0.0.1",
@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/quixote15/node-cache-manager-redis-store.git"
+    "url": "git+https://github.com/quixote15/node-cache-manager-redis-store.git"
   },
   "scripts": {
     "prepare": "npm prune",
@@ -37,5 +37,18 @@
   },
   "engines": {
     "node": ">= 16.18.0"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/quixote15/node-cache-manager-redis-store/issues"
+  },
+  "homepage": "https://github.com/quixote15/node-cache-manager-redis-store#readme",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "nestjs",
+    "redis",
+    "cachemanager",
+    "cluster"
+  ]
 }
