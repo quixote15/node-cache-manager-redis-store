@@ -2,7 +2,7 @@
   "name": "cache-manager-redis-cluster-store",
   "author": "Thiago Santos <santos2tiago@gmail.com>, Joseildo Mariano <filhojoseildo@gmail.com>",
   "description": "Redis store for node-cache-manager and cluster redis",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
