@@ -2,7 +2,7 @@
   "name": "@tijolotech/cache-manager-redis-cluster-store",
   "author": "Thiago Santos <santos2tiago@gmail.com>, Joseildo Mariano <filhojoseildo@gmail.com>",
   "description": "Redis store for node-cache-manager and cluster redis",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,7 +31,7 @@
     "@rollup/plugin-babel": "^6.0.0",
     "@types/cache-manager": "^4.0.2",
     "babel-jest": "^29.2.0",
-    "cache-manager": "^4.1.0",
+    "cache-manager": "4.1.0",
     "jest": "^29.2.0",
     "rollup": "^2.79.1"
   },

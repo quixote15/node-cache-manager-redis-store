@@ -17,6 +17,6 @@ interface RedisStore extends Store {
     ttl: (key: any, cb: any) => Promise<any>;
 }
 
-export function redisStore(config: RedisClientOptions & StoreConfig): Promise<RedisStore>;
-export function redisClusterStore(config: RedisClusterOptions & StoreConfig): Promise<RedisStore>;
-export function redisAdaptativeConnection(...config: (RedisClientOptions & StoreConfig | RedisClusterOptions & StoreConfig)[]): Promise<RedisStore>;
+export function redisStore(config: RedisClientOptions): Promise<RedisStore>;
+export function redisClusterStore(config: RedisClusterOptions): Promise<RedisStore>;
+export function redisAdaptativeConnection(...config: (RedisClientOptions | RedisClusterOptions)[]): Promise<RedisStore>;
