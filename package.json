@@ -1,8 +1,8 @@
 {
-  "name": "cache-manager-redis-store",
-  "author": "Matthijs Dabroek <dabroek@gmail.com>",
-  "description": "Redis store for node-cache-manager",
-  "version": "3.0.1",
+  "name": "cache-manager-redis-cluster-store",
+  "author": "Thiago Santos <santos2tiago@gmail.com>, Joseildo Mariano <filhojoseildo@gmail.com>",
+  "description": "Redis store for node-cache-manager and cluster redis",
+  "version": "0.0.1",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/dabroek/node-cache-manager-redis-store.git"
+    "url": "https://github.com/quixote15/node-cache-manager-redis-store.git"
   },
   "scripts": {
     "prepare": "npm prune",
