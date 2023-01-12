@@ -1,4 +1,3 @@
-import {callbackify} from 'node:util';
 import {createClient, createCluster} from 'redis';
 
 export async function redisStore(config) {
@@ -104,9 +103,17 @@ const buildRedisStoreWithConfig = (redisCache, config) => {
     return redisCache.del(args);
   };
   const reset = async () => {
+    const couldFlush = redisCache.flushDb
+    if(!couldFlush) {
+      throw 'Cannot Reset'
+    }
     return redisCache.flushDb();
   };
   const keys = async (pattern) => {
+    const hasKeys = redisCache.keys
+    if(!hasKeys) {
+      throw 'Has No Keys Function'
+    }
     return redisCache.keys(pattern);
   };
   const ttl = async (key) => {
@@ -117,18 +124,10 @@ const buildRedisStoreWithConfig = (redisCache, config) => {
     name: 'redis',
     getClient: () => redisCache,
     isCacheableValue,
-    set: (key, value, options, cb) => {
-      if (typeof options === 'function') {
-        cb = options;
-        options = {};
-      }
+    set: (key, value, options) => {
       options = options || {};
 
-      if (typeof cb === 'function') {
-        callbackify(set)(key, value, options, cb);
-      } else {
-        return set(key, value, options);
-      }
+      return set(key, value, options);
     },
     get: (key, options, cb) => {
       if (typeof options === 'function') {
@@ -137,64 +136,26 @@ const buildRedisStoreWithConfig = (redisCache, config) => {
       }
       options = options || {};
 
-      if (typeof cb === 'function') {
-        callbackify(get)(key, options, cb);
-      } else {
-        return get(key, options);
-      }
+      return get(key, options);
     },
     del: (...args) => {
-      if (typeof args.at(-1) === 'function') {
-        const cb = args.pop();
-        callbackify(del)(args, cb);
-      } else {
-        return del(args);
-      }
+      return del(args);
     },
     mset: (...args) => {
-      if (typeof args.at(-1) === 'function') {
-        const cb = args.pop();
-        callbackify(mset)(args, cb);
-      } else {
-        return mset(args);
-      }
+      return mset(args);
     },
     mget: (...args) => {
-      if (typeof args.at(-1) === 'function') {
-        const cb = args.pop();
-        callbackify(() => mget(...args))(cb);
-      } else {
-        return mget(...args);
-      }
+      return mget(...args);
     },
     mdel: (...args) => {
-      if (typeof args.at(-1) === 'function') {
-        const cb = args.pop();
-        callbackify(() => mdel(...args))(cb);
-      } else {
-        return mdel(...args);
-      }
+      return mdel(...args);
     },
-    reset: (cb) => {
-      if (typeof cb === 'function') {
-        callbackify(reset)(cb);
-      } else {
-        return reset();
-      }
-    },
+    reset,
     keys: (pattern = '*', cb) => {
-      if (typeof cb === 'function') {
-        callbackify(() => keys(pattern))(cb);
-      } else {
-        return keys(pattern);
-      }
+      return keys(pattern);
     },
-    ttl: (key, cb) => {
-      if (typeof cb === 'function') {
-        callbackify(() => ttl(key))(cb);
-      } else {
-        return ttl(key);
-      }
+    ttl: (key) => {
+      return ttl(key);
     },
   };
 };
