@@ -487,6 +487,8 @@ function _redisAdaptativeConnection() {
   _redisAdaptativeConnection = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee12() {
     var configIndex,
       config,
+      store,
+      _store,
       _args12 = arguments;
     return _regeneratorRuntime().wrap(function _callee12$(_context12) {
       while (1) {
@@ -495,57 +497,61 @@ function _redisAdaptativeConnection() {
             configIndex = 0;
           case 1:
             if (!(configIndex < _args12.length)) {
-              _context12.next = 31;
+              _context12.next = 35;
               break;
             }
             config = configIndex < 0 || _args12.length <= configIndex ? undefined : _args12[configIndex];
             if (!config.socket) {
-              _context12.next = 15;
+              _context12.next = 17;
               break;
             }
             _context12.prev = 4;
             _context12.next = 7;
             return redisStore(config);
           case 7:
-            return _context12.abrupt("return", _context12.sent);
-          case 10:
-            _context12.prev = 10;
+            store = _context12.sent;
+            console.log('Connected to Master/Slave', process.pid);
+            return _context12.abrupt("return", store);
+          case 12:
+            _context12.prev = 12;
             _context12.t0 = _context12["catch"](4);
             console.info("Could not connect master/slave with configuration at index:[".concat(configIndex, "]"));
-          case 13:
-            _context12.next = 28;
-            break;
           case 15:
+            _context12.next = 32;
+            break;
+          case 17:
             if (!config.rootNodes) {
-              _context12.next = 27;
+              _context12.next = 31;
               break;
             }
-            _context12.prev = 16;
-            _context12.next = 19;
+            _context12.prev = 18;
+            _context12.next = 21;
             return redisClusterStore(config);
-          case 19:
-            return _context12.abrupt("return", _context12.sent);
-          case 22:
-            _context12.prev = 22;
-            _context12.t1 = _context12["catch"](16);
+          case 21:
+            _store = _context12.sent;
+            console.log('Connected to Store', process.pid);
+            return _context12.abrupt("return", _store);
+          case 26:
+            _context12.prev = 26;
+            _context12.t1 = _context12["catch"](18);
             console.info("Could not connect Cluster with configuration at index:[".concat(configIndex, "]"));
-          case 25:
-            _context12.next = 28;
+          case 29:
+            _context12.next = 32;
             break;
-          case 27:
+          case 31:
             throw 'Missing socket or rootNodes field';
-          case 28:
+          case 32:
             configIndex++;
             _context12.next = 1;
             break;
-          case 31:
+          case 35:
             throw 'None of the configurations lead to a proper connection';
-          case 32:
+          case 36:
           case "end":
             return _context12.stop();
         }
       }
-    }, _callee12, null, [[4, 10], [16, 22]]);
+    }, _callee12, null, [[4, 12], [18, 26]]);
   }));
   return _redisAdaptativeConnection.apply(this, arguments);
 }

@@ -19,13 +19,17 @@ export async function redisAdaptativeConnection(...configs) {
     const config = configs[configIndex]
     if(config.socket) {
       try {
-        return await redisStore(config)
+        const store = await redisStore(config)
+        console.log('Connected to Master/Slave', process.pid)
+        return store
       } catch (e) {
         console.info(`Could not connect master/slave with configuration at index:[${configIndex}]`)
       }
     } else if(config.rootNodes) {
       try {
-        return await redisClusterStore(config)
+        const store = await redisClusterStore(config)
+        console.log('Connected to Store', process.pid)
+        return store
       } catch (e) {
         console.info(`Could not connect Cluster with configuration at index:[${configIndex}]`)
       }
